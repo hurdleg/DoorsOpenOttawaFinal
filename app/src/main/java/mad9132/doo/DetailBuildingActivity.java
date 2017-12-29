@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import mad9132.doo.model.BuildingPOJO;
@@ -43,9 +45,11 @@ public class DetailBuildingActivity extends Activity {
 
         //FIXME :: LOCALHOST
         String url = "https://doors-open-ottawa.mybluemix.net/buildings/" + selectedBuilding.getBuildingId() + "/image";
-        url = "http://10.0.2.2:3000/buildings/" + selectedBuilding.getBuildingId() + "/image";
+        //url = "http://10.0.2.2:3000/buildings/" + selectedBuilding.getBuildingId() + "/image";
         Picasso.with(this)
                 .load(Uri.parse(url))
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .networkPolicy(NetworkPolicy.NO_CACHE)
                 .error(R.drawable.noimagefound)
                 .fit()
                 .into(buildingImage);

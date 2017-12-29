@@ -39,8 +39,8 @@ public class MainActivity extends AppCompatActivity {
     public static final int     REQUEST_EDIT_BUILDING = 2;
 
     //FIXME :: LOCALHOST
-    //public static final String JSON_URL = "https://doors-open-ottawa.mybluemix.net/buildings";
-    public static final String JSON_URL = "http://10.0.2.2:3000/buildings";
+    public static final String JSON_URL = "https://doors-open-ottawa.mybluemix.net/buildings";
+    //public static final String JSON_URL = "http://10.0.2.2:3000/buildings";
 
     private static final int    NO_SELECTED_CATEGORY_ID = -1;
     private static final String REMEMBER_SELECTED_CATEGORY_ID = "lastSelectedCategoryId";
@@ -69,9 +69,8 @@ public class MainActivity extends AppCompatActivity {
                 mBuildingsList = Arrays.asList(buildingsArray);
                 displayBuildings();
             } else if (intent.hasExtra(MyService.MY_SERVICE_RESPONSE)) {
-                String response = intent.getStringExtra(MyService.MY_SERVICE_RESPONSE);
-                Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
-                uploadBitmap();
+                BuildingPOJO myBuilding = intent.getParcelableExtra(MyService.MY_SERVICE_RESPONSE);
+                uploadBitmap(myBuilding.getBuildingId());
             } else if (intent.hasExtra(MyService.MY_SERVICE_EXCEPTION)) {
                 String message = intent.getStringExtra(MyService.MY_SERVICE_EXCEPTION);
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
@@ -203,14 +202,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void uploadBitmap() {
+    private void uploadBitmap(int buildingId) {
         if (mBitmap != null ) {
             RequestPackage requestPackage = new RequestPackage();
             requestPackage.setMethod(HttpMethod.POST);
-            requestPackage.setEndPoint(JSON_URL + "/" + (mBuildingAdapter.getItemCount() + 1) + "/image");
-            requestPackage.setEndPoint(JSON_URL + "/" + 166 + "/image");
+            requestPackage.setEndPoint(JSON_URL + "/" + buildingId + "/image");
 
-            Toast.makeText(this, "Uploaded image", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Uploaded image for Building Id: " + buildingId + "", Toast.LENGTH_SHORT).show();
 
             Intent intent = new Intent(this, UploadImageFileService.class);
             intent.putExtra(UploadImageFileService.REQUEST_PACKAGE, requestPackage);

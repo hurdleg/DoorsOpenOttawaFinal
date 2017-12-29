@@ -61,8 +61,7 @@ public class MyService extends IntentService {
             case PUT:
             case DELETE:
                 BuildingPOJO building = gson.fromJson(response, BuildingPOJO.class);
-                messageIntent.putExtra(MY_SERVICE_RESPONSE,
-                        requestPackage.getMethod() + ": " + building.getNameEN());
+                messageIntent.putExtra(MY_SERVICE_RESPONSE, building);
                 break;
         }
         LocalBroadcastManager manager =

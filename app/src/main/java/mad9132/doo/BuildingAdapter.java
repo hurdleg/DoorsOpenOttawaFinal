@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.MemoryPolicy;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -48,9 +50,11 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
 
         //FIXME :: LOCALHOST
         String url = "https://doors-open-ottawa.mybluemix.net/buildings/" + aBuilding.getBuildingId() + "/image";
-        url = "http://10.0.2.2:3000/buildings/" + aBuilding.getBuildingId() + "/image";
+        //url = "http://10.0.2.2:3000/buildings/" + aBuilding.getBuildingId() + "/image";
         Picasso.with(mContext)
                 .load(Uri.parse(url))
+                .memoryPolicy(MemoryPolicy.NO_CACHE)
+                .networkPolicy(NetworkPolicy.NO_CACHE)
                 .error(R.drawable.noimagefound)
                 .resize(96, 96)
                 .into(holder.imageView);
