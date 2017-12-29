@@ -42,8 +42,8 @@ public class DetailBuildingActivity extends Activity {
         tvDescription.setText(selectedBuilding.getDescriptionEN());
 
         //FIXME :: LOCALHOST
-        //String url = "https://doors-open-ottawa.mybluemix.net/buildings/" + selectedBuilding.getBuildingId() + "/image";
-        String url = "http://10.0.2.2:3000/buildings/" + selectedBuilding.getBuildingId() + "/image";
+        String url = "https://doors-open-ottawa.mybluemix.net/buildings/" + selectedBuilding.getBuildingId() + "/image";
+        url = "http://10.0.2.2:3000/buildings/" + selectedBuilding.getBuildingId() + "/image";
         Picasso.with(this)
                 .load(Uri.parse(url))
                 .error(R.drawable.noimagefound)

@@ -38,7 +38,7 @@ public class MyService extends IntentService {
 
         String response;
         try {
-            response = HttpHelper.downloadUrl(requestPackage);
+            response = HttpHelper.downloadUrl(requestPackage, "hurdleg", "pa$$word");
         } catch (IOException e) {
             e.printStackTrace();
             Intent messageIntent = new Intent(MY_SERVICE_MESSAGE);

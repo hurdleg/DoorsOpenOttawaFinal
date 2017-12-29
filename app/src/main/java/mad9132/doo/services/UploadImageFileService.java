@@ -3,17 +3,16 @@ package mad9132.doo.services;
 import android.app.IntentService;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
-import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 
-import mad9132.doo.R;
-import mad9132.doo.model.BuildingPOJO;
 import mad9132.doo.utils.HttpHelper;
 import mad9132.doo.utils.RequestPackage;
+
+import static mad9132.doo.MainActivity.NEW_BUILDING_IMAGE;
 
 /**
  * UploadImageFileService.
@@ -34,15 +33,16 @@ public class UploadImageFileService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         RequestPackage requestPackage = (RequestPackage) intent.getParcelableExtra(REQUEST_PACKAGE);
+        Bitmap bitmap = (Bitmap) intent.getParcelableExtra(NEW_BUILDING_IMAGE);
 
         // hard-coded image from res/drawable
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.i_am_smiling);
+//        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.i_am_smiling);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.JPEG, 0, baos);
 
-        String response;
+        String response = null;
         try {
-            response = HttpHelper.uploadFile(requestPackage, "hurdleg", "pa$$word", "i_am_smiling.jpg", baos.toByteArray());
+            response = HttpHelper.uploadFile(requestPackage, "hurdleg", "pa$$word", "photo.jpg", baos.toByteArray());
         } catch (Exception e) {
             e.printStackTrace();
             Intent messageIntent = new Intent(UPLOAD_IMAGE_FILE_SEVICE_MESSAGE);
@@ -53,14 +53,6 @@ public class UploadImageFileService extends IntentService {
             return;
         }
 
-        Intent messageIntent = new Intent(UPLOAD_IMAGE_FILE_SEVICE_MESSAGE);
-        Gson gson = new Gson();
-        BuildingPOJO building = gson.fromJson(response, BuildingPOJO.class);
-        messageIntent.putExtra(UPLOAD_IMAGE_FILE_SERVICE_RESPONSE,
-                requestPackage.getMethod() + ": " + building.getImage());
-
-        LocalBroadcastManager manager =
-                LocalBroadcastManager.getInstance(getApplicationContext());
-        manager.sendBroadcast(messageIntent);
+        Log.e("HERE", "upload image: " + response);
     }
 }

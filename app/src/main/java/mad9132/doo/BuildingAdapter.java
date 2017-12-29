@@ -47,8 +47,8 @@ public class BuildingAdapter extends RecyclerView.Adapter<BuildingAdapter.ViewHo
         holder.tvName.setText(aBuilding.getNameEN());
 
         //FIXME :: LOCALHOST
-        //String url = "https://doors-open-ottawa.mybluemix.net/buildings/" + aBuilding.getBuildingId() + "/image";
-        String url = "http://10.0.2.2:3000/buildings/" + aBuilding.getBuildingId() + "/image";
+        String url = "https://doors-open-ottawa.mybluemix.net/buildings/" + aBuilding.getBuildingId() + "/image";
+        url = "http://10.0.2.2:3000/buildings/" + aBuilding.getBuildingId() + "/image";
         Picasso.with(mContext)
                 .load(Uri.parse(url))
                 .error(R.drawable.noimagefound)

@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Doors Open Ottawa (Final)</string>
 
+    <string name="post_data">New Building...</string>
+
     <string name="show_all_buildings">Show All Buildings</string>
     <string name="choose_a_category">Choose a Category</string>
     <string-array name="categories">

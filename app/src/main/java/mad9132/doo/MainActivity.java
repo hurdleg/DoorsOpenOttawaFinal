@@ -1,14 +1,15 @@
 package mad9132.doo;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,14 +25,22 @@ import java.util.List;
 
 import mad9132.doo.model.BuildingPOJO;
 import mad9132.doo.services.MyService;
+import mad9132.doo.services.UploadImageFileService;
+import mad9132.doo.utils.HttpMethod;
 import mad9132.doo.utils.NetworkHelper;
 import mad9132.doo.utils.RequestPackage;
 
-public class MainActivity extends Activity {
+public class MainActivity extends AppCompatActivity {
+
+    public static final String  NEW_BUILDING_DATA = "NEW_BUILDING_DATA";
+    public static final String  NEW_BUILDING_IMAGE = "NEW_BUILDING_IMAGE";
+    public static final String  EDIT_BUILDING_DATA = "EDIT_BUILDING_DATA";
+    public static final int     REQUEST_NEW_BUILDING = 1;
+    public static final int     REQUEST_EDIT_BUILDING = 2;
 
     //FIXME :: LOCALHOST
-    //private static final String JSON_URL = "https://doors-open-ottawa.mybluemix.net/buildings";
-    private static final String JSON_URL = "http://10.0.2.2:3000/buildings";
+    //public static final String JSON_URL = "https://doors-open-ottawa.mybluemix.net/buildings";
+    public static final String JSON_URL = "http://10.0.2.2:3000/buildings";
 
     private static final int    NO_SELECTED_CATEGORY_ID = -1;
     private static final String REMEMBER_SELECTED_CATEGORY_ID = "lastSelectedCategoryId";
@@ -39,11 +48,12 @@ public class MainActivity extends Activity {
     private BuildingAdapter    mBuildingAdapter;
     private List<BuildingPOJO> mBuildingsList;
     private String[]           mCategories;
-    private DrawerLayout mDrawerLayout;
-    private ListView mDrawerList;
-    private ProgressBar mProgressBar;
-    private RecyclerView mRecyclerView;
+    private DrawerLayout       mDrawerLayout;
+    private ListView           mDrawerList;
+    private ProgressBar        mProgressBar;
+    private RecyclerView       mRecyclerView;
     private int                mRememberSelectedCategoryId;
+    private Bitmap             mBitmap;
 
     private BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -58,6 +68,10 @@ public class MainActivity extends Activity {
 
                 mBuildingsList = Arrays.asList(buildingsArray);
                 displayBuildings();
+            } else if (intent.hasExtra(MyService.MY_SERVICE_RESPONSE)) {
+                String response = intent.getStringExtra(MyService.MY_SERVICE_RESPONSE);
+                Toast.makeText(context, response, Toast.LENGTH_SHORT).show();
+                uploadBitmap();
             } else if (intent.hasExtra(MyService.MY_SERVICE_EXCEPTION)) {
                 String message = intent.getStringExtra(MyService.MY_SERVICE_EXCEPTION);
                 Toast.makeText(context, message, Toast.LENGTH_SHORT).show();
@@ -101,6 +115,25 @@ public class MainActivity extends Activity {
     }
 
     @Override
+    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+        if (requestCode == REQUEST_NEW_BUILDING) {
+            if (resultCode == RESULT_OK) {
+                BuildingPOJO newBuilding = data.getExtras().getParcelable(NEW_BUILDING_DATA);
+                Bitmap image  = (Bitmap) data.getParcelableExtra(NEW_BUILDING_IMAGE);
+                if (image != null) {
+                    mBitmap = image;
+                }
+
+                Toast.makeText(this, "Added Building: " + newBuilding.getNameEN(), Toast.LENGTH_SHORT).show();
+            }
+
+            if (resultCode == RESULT_CANCELED) {
+                Toast.makeText(this, "Cancelled: Add New Building", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
 
@@ -136,6 +169,11 @@ public class MainActivity extends Activity {
                 //open the drawer
                 mDrawerLayout.openDrawer(mDrawerList);
                 return true;
+
+            case R.id.action_post_data:
+                Intent intent = new Intent(this, NewBuildingActivity.class);
+                startActivityForResult(intent, REQUEST_NEW_BUILDING);
+                return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -162,6 +200,22 @@ public class MainActivity extends Activity {
             startService(intent);
         } else {
             Toast.makeText(this, "Network not available", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void uploadBitmap() {
+        if (mBitmap != null ) {
+            RequestPackage requestPackage = new RequestPackage();
+            requestPackage.setMethod(HttpMethod.POST);
+            requestPackage.setEndPoint(JSON_URL + "/" + (mBuildingAdapter.getItemCount() + 1) + "/image");
+            requestPackage.setEndPoint(JSON_URL + "/" + 166 + "/image");
+
+            Toast.makeText(this, "Uploaded image", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(this, UploadImageFileService.class);
+            intent.putExtra(UploadImageFileService.REQUEST_PACKAGE, requestPackage);
+            intent.putExtra(NEW_BUILDING_IMAGE, mBitmap);
+            startService(intent);
         }
     }
 }
