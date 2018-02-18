@@ -39,7 +39,7 @@ public class MyService extends IntentService {
         String response;
         try {
             // TODO: change to your AC username + password :)
-            response = HttpHelper.downloadUrl(requestPackage, "TODO", "TODO");
+            response = HttpHelper.downloadUrl(requestPackage, "hurdleg", "abc123");
         } catch (IOException e) {
             e.printStackTrace();
             Intent messageIntent = new Intent(MY_SERVICE_MESSAGE);

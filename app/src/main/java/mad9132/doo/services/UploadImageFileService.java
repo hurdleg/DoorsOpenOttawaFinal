@@ -40,7 +40,8 @@ public class UploadImageFileService extends IntentService {
 
         String response = null;
         try {
-            response = HttpHelper.uploadFile(requestPackage, "hurdleg", "pa$$word", "photo.jpg", baos.toByteArray());
+            // TODO: replace username with your AC username
+            response = HttpHelper.uploadFile(requestPackage, "hurdleg", "abc123", "photo.jpg", baos.toByteArray());
         } catch (Exception e) {
             e.printStackTrace();
             Intent messageIntent = new Intent(UPLOAD_IMAGE_FILE_SEVICE_MESSAGE);

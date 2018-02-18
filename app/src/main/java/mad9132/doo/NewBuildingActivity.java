@@ -82,9 +82,11 @@ public class NewBuildingActivity extends AppCompatActivity {
                 requestPackage.setParam("nameEN", newBuilding.getNameEN() );
                 requestPackage.setParam("addressEN", newBuilding.getAddressEN() );
                 requestPackage.setParam("addressFR", newBuilding.getAddressEN() );
-                requestPackage.setParam("categoryId", 3 + "");
-                requestPackage.setParam("categoryEN", "abc");
-                requestPackage.setParam("categoryFR", "xyz");
+                requestPackage.setParam("categoryId", 10 + "");
+                requestPackage.setParam("categoryEN", "STUDENTS");
+                requestPackage.setParam("categoryFR", "STUDENTS");
+                requestPackage.setParam("saturdayStart", "null");
+                requestPackage.setParam("saturdayClose", "null");
 
                 Intent intent = new Intent(getApplicationContext(), MyService.class);
                 intent.putExtra(MyService.REQUEST_PACKAGE, requestPackage);
